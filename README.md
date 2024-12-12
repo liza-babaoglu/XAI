@@ -1,6 +1,6 @@
 # XAI
 
-**Our Implementation Trials** Preliminary_GradCAM.ipynb, RISE.py
+**Our Implementation** Preliminary_GradCAM.ipynb, RISE.py
 
 **VGG16 training** vgg6.ipynb
 
