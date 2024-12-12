@@ -41,7 +41,7 @@ gs = GradientShap(model)
 model.eval()
 
 
-target_indices = {1, 19, 2, 445}
+target_indices = {27}
 processed_count = 0
 max_samples = len(target_indices)
 
@@ -96,7 +96,7 @@ for i, (images, labels) in enumerate(test_loader):
             attributions_3d,
             image_3d,
             method="heat_map",
-            cmap="inferno",
+            cmap="coolwarm",
             show_colorbar=False,
             plt_fig_axis=(fig, axes[1]),
             use_pyplot=False
