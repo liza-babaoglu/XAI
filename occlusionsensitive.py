@@ -78,7 +78,7 @@ ig = Occlusion(model)
 model.eval()
 
 
-target_indices = {1}
+target_indices = {27}
 processed_count = 0
 max_samples = len(target_indices)
 
