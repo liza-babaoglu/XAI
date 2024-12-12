@@ -6,12 +6,12 @@ import matplotlib.pyplot as plt
 import torch.nn as nn
 from medmnist import INFO
 from medmnist.dataset import PathMNIST
-
+from medmnist import PneumoniaMNIST
 from torchvision import models, transforms
 
-data_flag = "pathmnist"
+data_flag = 'pneumoniamnist'
 info = INFO[data_flag]
-num_classes = len(info["label"])
+num_classes = 2
 
 
 transform = transforms.Compose([
@@ -19,18 +19,12 @@ transform = transforms.Compose([
 ])
 
 
-test_dataset = PathMNIST(split='test', transform=transform, download=True,size=224)
+test_dataset = PneumoniaMNIST(split='test', transform=transform, download=True,size=224)
 
 
 class RISE:
     def __init__(self, model, input_size, num_masks=5000, mask_size=8):
-        """
-        
-        :param model: 
-        :param input_size: 
-        :param num_masks: 
-        :param mask_size: 
-        """
+
         self.model = model
         self.input_size = input_size
         self.num_masks = num_masks
@@ -39,6 +33,7 @@ class RISE:
 
     def _generate_masks(self):
 
+        np.random.seed(42)
         masks = np.random.choice([0, 1], size=(self.num_masks, self.mask_size, self.mask_size), p=[0.5, 0.5])
         masks = masks.astype(np.float32)
         masks = np.array([
@@ -47,6 +42,7 @@ class RISE:
         return torch.tensor(masks, dtype=torch.float32).unsqueeze(1)  # (num_masks, 1, H, W)
 
     def explain(self, image, target_class):
+
         image = image.unsqueeze(0)
         batch_size = 32
         heatmap = torch.zeros(self.input_size, dtype=torch.float32)
@@ -67,11 +63,18 @@ class RISE:
         return heatmap.numpy()
 
 
-image, label = test_dataset[0]
+image, label = test_dataset[3]
 vgg16 = models.vgg16(pretrained=False)
+vgg16.features[0] = nn.Conv2d(
+    in_channels=1,
+    out_channels=64,
+    kernel_size=3,
+    stride=1,
+    padding=1
+)
 vgg16.classifier[5] = nn.Dropout(0.5)
 vgg16.classifier[6] = torch.nn.Linear(4096, num_classes)
-
+vgg16.eval()
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 vgg16.load_state_dict(torch.load("best_vgg16_multiclass.pth"))
@@ -81,7 +84,7 @@ vgg16 = vgg16.to(device).eval()
 input_image = image.to(device)
 
 
-rise = RISE(vgg16, input_size=(224, 224), num_masks=5000, mask_size=8)
+rise = RISE(vgg16, input_size=(224, 224), num_masks=20000, mask_size=8)
 target_class = label
 heatmap = rise.explain(input_image, target_class)
 
