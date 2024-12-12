@@ -51,7 +51,7 @@ class RISE:
         for i in tqdm(range(0, self.num_masks, batch_size)):
             batch_masks = self.masks[i:i + batch_size]
             masked_images = image * batch_masks.cuda()
-            outputs = self.model(masked_images).detach().cpu()  # 不需要 softmax
+            outputs = self.model(masked_images).detach().cpu()  
             scores = outputs.squeeze(1)
 
 
