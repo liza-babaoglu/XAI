@@ -68,20 +68,10 @@ model.features[0] = nn.Conv2d(
 )
 model.classifier[5] = nn.Dropout(0.5)
 model.classifier[6] = torch.nn.Linear(4096, num_classes)
-layer_idx=24
-conv_layer = model.features[layer_idx]
 
-
-model.features[layer_idx] = nn.Conv2d(
-    in_channels=conv_layer.in_channels,
-    out_channels=conv_layer.out_channels,
-    kernel_size=5,
-    stride=1,
-    padding=2
-)
 # load trained model
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model.load_state_dict(torch.load("best_vgg16_multiclass_ver.pth"))
+model.load_state_dict(torch.load("best_vgg16_multiclass.pth"))
 
 model.to(device)
 ig = IntegratedGradients(model)
@@ -121,7 +111,7 @@ with open("incorrect_predictions1ver.txt", "w") as file:
             predicted_label = predicted_cpu[j].argmax().item()
 
 
-            if label == 0 and predicted_label == 1:
+            if label == 1 and predicted_label == 1:
                 processed_count += 1
 
 
