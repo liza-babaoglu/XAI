@@ -24,7 +24,7 @@ _Code Structure_
 
 **VGG16 with Builtin Explainable AI models** VGG_16_IntegratedGradients.py, VGG_16_grad_cam.py (and VGG_16_gradcam_overlay), VGG_16_occlusionsensitive.py, VGG_16_shap.py
 
-**ResNet18 with Builtin Explainable AI models** ResNet18_XAIs.ipynb
+**ResNet18 with Builtin Explainable AI models** ResNet_18.ipynb
 
 
 
